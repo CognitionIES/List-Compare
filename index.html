@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Difference Finder</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+        button { padding: 10px 20px; font-size: 16px; }
+        #result { margin-top: 20px; white-space: pre; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Find Missing Items Between Two Lists</h1>
+    <p>Enter items for each list, one per line (or separated by spaces/commas). Duplicates will be ignored.</p>
+    
+    <label for="list1">First List:</label><br>
+    <textarea id="list1" placeholder="e.g.&#10;A&#10;B&#10;C&#10;D&#10;F"></textarea><br>
+    
+    <label for="list2">Second List:</label><br>
+    <textarea id="list2" placeholder="e.g.&#10;A&#10;E&#10;C&#10;F&#10;G"></textarea><br>
+    
+    <button onclick="compareLists()">Compare</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        function compareLists() {
+            const text1 = document.getElementById('list1').value.trim();
+            const text2 = document.getElementById('list2').value.trim();
+            
+            if (!text1 || !text2) {
+                document.getElementById('result').innerText = "Please enter both lists.";
+                return;
+            }
+            
+            // Split by newlines, spaces, or commas, and trim
+            const items1 = text1.split(/[\n\s,]+/).map(s => s.trim()).filter(s => s);
+            const items2 = text2.split(/[\n\s,]+/).map(s => s.trim()).filter(s => s);
+            
+            // Use Sets for unique values
+            const set1 = new Set(items1);
+            const set2 = new Set(items2);
+            
+            // Missing in list1 (present only in list2)
+            const missingIn1 = [...set2].filter(x => !set1.has(x)).sort();
+            
+            // Missing in list2 (present only in list1)
+            const missingIn2 = [...set1].filter(x => !set2.has(x)).sort();
+            
+            let result = "";
+            result += "Present in Second list but missing in First: " + (missingIn1.length ? missingIn1.join(" ") : "None") + "\n\n";
+            result += "Present in First list but missing in Second: " + (missingIn2.length ? missingIn2.join(" ") : "None");
+            
+            document.getElementById('result').innerText = result;
+        }
+    </script>
+</body>
+</html>
